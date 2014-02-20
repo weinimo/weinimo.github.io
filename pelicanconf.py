@@ -6,7 +6,7 @@ AUTHOR = u'Thomas Weininger'
 SITENAME = u'weininger.net'
 SITEURL = ''
 
-TIMEZONE = 'Europe/Paris'
+TIMEZONE = 'Europe/Monaco'
 
 DEFAULT_LANG = u'en'
 
@@ -22,8 +22,21 @@ TRANSLATION_FEED_ATOM = None
           #~ ('You can modify those links in your config file', '#'),)
 
 # Social widget
-#~ SOCIAL = (('You can add links in your config file', '#'),
-          #~ ('Another social link', '#'),)
+SOCIAL = (('github', 'https://github.com/weinimo'),)
+
+# path-specific metadata
+EXTRA_PATH_METADATA = {
+    'extra/robots.txt': {'path': 'robots.txt'},
+}
+
+# static paths will be copied without parsing their contents
+STATIC_PATHS = [
+    'pictures',
+    'extra/robots.txt',
+]
+
+# code blocks with line numbers
+PYGMENTS_RST_OPTIONS = {'linenos': 'table'}
 
 DEFAULT_PAGINATION = 10
 
