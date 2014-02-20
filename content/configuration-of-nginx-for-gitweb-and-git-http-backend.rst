@@ -119,16 +119,16 @@ the .htacces authentication from Apache.
        }
     }
 
- 
 
 | **Update1:** I had to add the line fastcgi\_param REMOTE\_USER
-$remote\_user; to the NGINX configuration to fix the 403 errors I got
-when trying to push changes to the server. This is necessary because I
-use HTTP authentification. I also added some commands for preparing the
-repositories for git-http-backend.
-|  **Update2:** Added a section for setting up the repository file modes
-to prevent the "remote: error: insufficient permission for adding an
-object to repository database ./objects" error when trying to push to
-the repository.
+| $remote\_user; to the NGINX configuration to fix the 403 errors I got
+| when trying to push changes to the server. This is necessary because I
+| use HTTP authentification. I also added some commands for preparing the
+| repositories for git-http-backend.
+
+| **Update2:** Added a section for setting up the repository file modes
+| to prevent the "remote: error: insufficient permission for adding an
+| object to repository database ./objects" error when trying to push to
+| the repository.
 
 .. _here: http://eatabrick.org/20120126_gitweb_nginx.html
