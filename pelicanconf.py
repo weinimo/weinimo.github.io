@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 AUTHOR = u'Thomas Weininger'
 SITENAME = u'weininger.net'
 SITEURL = ''
-THEME = '/home/tom/workspace/pelican-themes/gum'
+THEME = '/home/tom/workspace/pelican-themes/mg'
 TIMEZONE = 'Europe/Monaco'
 
 DEFAULT_LANG = u'en'
