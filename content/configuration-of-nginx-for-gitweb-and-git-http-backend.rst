@@ -83,7 +83,7 @@ the .htacces authentication from Apache.
         ssl_certificate      /etc/ssl/certs/certforyoursite.crt;
         ssl_certificate_key  /etc/ssl/private/sitekey.pem;
         ssl_session_timeout 5m;
-        ssl_protocols        SSLv2 SSLv3 TLSv1;
+        ssl_protocols        TLSv1 TLSv1.1 TLSv1.2;
         ssl_ciphers          HIGH:!ADH:!MD5;
         ssl_prefer_server_ciphers on;
 
@@ -130,5 +130,8 @@ the .htacces authentication from Apache.
 | to prevent the "remote: error: insufficient permission for adding an
 | object to repository database ./objects" error when trying to push to
 | the repository.
+
+| **Update3:** Disabled SSL and enabled TLS1.1 and TLS1.2 support.
+| Thanks for your comment itefixnet.
 
 .. _here: http://eatabrick.org/20120126_gitweb_nginx.html
