@@ -8,12 +8,12 @@ NGINX Configuration for Gitweb and git-http-backend
 
 Gitweb is a nice web interface for Git repositories. For instance go
 to \ http://git.kernel.org/ to see how it looks like. I find it useful
-especially when I'm not on my own Linux machine and need to check out
-some files from one of my repositories. git-http-backend on the other
-hand allows cloning of git repositories over HTTP(S).
+especially when I'm using the machine of somebody else and need to check out
+some files from one of my own repositories. git-http-backend allows me
+to clone git repositories over HTTPS so I don't have to use SSH.
 
 First you have to prepare your repositories on your server for accessing
-them via HTTP(S). I would recommend creating an extra user "git" for it.
+them via HTTPS. I would recommend to create an extra user "git" for it.
 In this example I put my repositories to /home/git/repositories.
 Basically you can put them where you want.
 
@@ -47,7 +47,7 @@ with git-http-backend.
     fastcgi_param GIT_HTTP_EXPORT_ALL "";
     fastcgi_param REMOTE_USER $remote_user;
 
-Furthermore I have added the auth\_basic lines to restrict the access to
+Furthermore, I have added the auth\_basic lines to restrict the access to
 my repositories. The configuration shown below has been tested with
 Ubuntu 12.04.
 
@@ -59,8 +59,8 @@ But first make sure you have all required packages installed:
 
 Here is my NGINX configuration file for Gitweb and git-http-backend. It
 allows access only using HTTPS and asks for authentication both for the
-web interface as well as for cloning a repository. It is basically like
-the .htacces authentication from Apache.
+web interface and for cloning the repositories. It works basically like
+the .htaccess authentication mechanism from Apache.
 
 .. code:: text
 

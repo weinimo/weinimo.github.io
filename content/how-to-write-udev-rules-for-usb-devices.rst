@@ -6,14 +6,14 @@ How to Write udev Rules for USB Devices
 :tags: Linux, udev, USB
 :slug: how-to-write-udev-rules-for-usb-devices
 
-|Udev-tux|\ If you use a custom USB device, for which there isn't a
-suitable udev rule installed on your system yet, you might notice that
+|Udev-tux|\ If you use a custom USB device for which there isn't a
+suitable udev rule installed on your system yet you might notice that
 only the root user has read and write access for it. In order to make it
-usable for every user you need to write a new udev rule. Here I show you
-an easy way how to do this.
+usable for normal users you need to write a new udev rule. Here is an
+easy way how to do this.
 
 First we have to collect some information about that device. As we have
-a USB device in this example, we get some basic information from
+an USB device in this example, we get some basic information from
 ``lsusb``. Its output must look something like this:
 
 ``Bus 001 Device 003: ID 1111:2222 FooDev``
@@ -22,8 +22,7 @@ Now we know where in the Linux filesystem that device has been mounted:
 
 ``/dev/bus/usb/001/003``
 
-We can use this path now to ask udev about how this device looks like
-for udev:
+We can use this path now to ask udev about how it sees the device:
 
 ``udevadm info -a -p $(udevadm info -q path -n /dev/bus/usb/001/003)``
 
@@ -65,7 +64,7 @@ output should look like this:
         ATTR{bDeviceClass}=="00"
         ATTR{product}=="Some FooDev"
 
-With this information we can start writing a new udev rule. We do this
+With this information we can finally start writing the new udev rule. We do this
 by creating a new file:
 
 ``vim /etc/udev/rules.d/10-local.rules``
