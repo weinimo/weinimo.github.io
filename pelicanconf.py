@@ -3,8 +3,9 @@
 from __future__ import unicode_literals
 
 AUTHOR = u'Thomas Weininger'
+AUTHOR_EMAIL = 'blog@weinimo.de'
 SITENAME = u'weininger.net'
-SITEURL = ''
+SITEURL = 'https://weininger.net'
 #THEME = '/home/tom/workspace/pelican-themes/mg'
 TIMEZONE = 'Europe/Monaco'
 
