@@ -8,9 +8,9 @@ OUTPUTDIR=$(BASEDIR)/output
 CONFFILE=$(BASEDIR)/pelicanconf.py
 PUBLISHCONF=$(BASEDIR)/publishconf.py
 
-FTP_HOST=localhost
-FTP_USER=anonymous
-FTP_TARGET_DIR=/
+FTP_HOST=ftp.cluster014.ovh.net
+FTP_USER=weininge
+FTP_TARGET_DIR=/www
 
 SSH_HOST=weinimo.de
 SSH_PORT=3100
