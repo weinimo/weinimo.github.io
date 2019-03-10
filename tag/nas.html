@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <title>weinimo.github.io - NAS</title>
+        <link rel="stylesheet" href="http://weinimo.github.io/theme/css/main.css" />
+        <link href="http://weinimo.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="weinimo.github.io Atom Feed" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="http://weinimo.github.io/">weinimo.github.io </a></h1>
+                <nav><ul>
+                    <li><a href="http://weinimo.github.io/category/free-software.html">Free Software</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+
+            <aside id="featured" class="body">
+                <article>
+                    <h1 class="entry-title"><a href="http://weinimo.github.io/streaming-video-files-to-samsung-tvs-part-1.html">Streaming video files to Samsung TVs (Part 1)</a></h1>
+<footer class="post-info">
+        <abbr class="published" title="2012-05-12T18:31:00+02:00">
+                Published: Sa 12 Mai 2012
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="http://weinimo.github.io/author/thomas-weininger.html">Thomas Weininger</a>
+        </address>
+<p>In <a href="http://weinimo.github.io/category/free-software.html">Free Software</a>.</p>
+<p>tags: <a href="http://weinimo.github.io/tag/dlna.html">DLNA</a> <a href="http://weinimo.github.io/tag/linux.html">Linux</a> <a href="http://weinimo.github.io/tag/nas.html">NAS</a> <a href="http://weinimo.github.io/tag/samsung-tv.html">Samsung TV</a> <a href="http://weinimo.github.io/tag/serviio.html">Serviio</a> </p>
+</footer><!-- /.post-info --><p><a class="reference external" href="http://blog.weinimo.de/wp-content/uploads/2012/05/logo1.png"><img alt="image0" src="http://blog.weinimo.de/wp-content/uploads/2012/05/logo1-300x79.png" /></a></p>
+<p>I have a huge video archive on my NAS and I wanted to be able to stream
+the files to my Samsung TV UE40D6300 using its DLNA capability. Because
+TVs in general and the DLNA standard especially do not support many
+codecs it was clear to me that this goal may not be that easy to
+achieve.</p>
+<p>I thought transcoding would solve my codec problems, so I installed
+<a class="reference external" href="http://mediatomb.cc/">Mediatomb</a> on my NAS. Unfortunately it hasn't. Instead It brought me
+some new problems. Suddenly I wasn't able to use the fast-forward
+function anymore. Furthermore I didn't like Mediatomb much, as it seems
+the developers stopped working on this project. So I searched for
+alternatives. <a class="reference external" href="http://sourceforge.net/projects/minidlna/">MiniDLNA</a> was a promising candidate, but it didn't
+support on-the-fly transcoding like Mediatomb did and I even noticed
+that some files that would play fine on my TV without any transcoding
+don't work with miniDLNA. It was clear that miniDLNA couldn't offer the
+functionality I needed.</p>
+<p>For a long time I had no real solution for these issues and so my search
+for a better mediaserver continued. Finally I found a new project called
+<a class="reference external" href="http://www.serviio.org/">Serviio</a>. It hasn't been released under Open Source license yet, but
+it seemed to have (nearly) all the features I was searching for. It
+supports transcoding while it is still possible to jump forwards and
+backwards in many movies. Using profiles Serviio is able to adjust its
+behaviour depending on what client hardware you use. And Serviio even
+detects your hardware and sets the matching profile automatically.
+That's how software should work wherever possible - without any
+intervention of its user. Of course Serviio isn't perfect yet, eg. it
+seems to have problems with huge collections, but it's better than
+anything I've tried before. I strongly encourage everyone having similar
+problems to try Serviio out. It's a great piece of software.</p>
+<p>Basically I was happy with my setup. I was able to watch all my movies
+from my NAS on my TV. But on-the-fly transcoding has a downside that
+still hindered the perfect streaming experience. It wasn't possible to
+use fast-forward wherever transcoding was necessary. I had to find out
+which codecs and which container formats my Samsung TV is able to play
+over DLNA, so I prepared a series of testvideos with different video and
+audio codecs and different container formats on my NAS to test it out.</p>
+<p>The results of my investigations and my final approach for solving my
+streaming issues will be subject of my next posts.</p>
+<p>There are <a href="http://weinimo.github.io/streaming-video-files-to-samsung-tvs-part-1.html#disqus_thread">comments</a>.</p>                </article>
+            </aside><!-- /#featured -->
+        <section id="extras" class="body">
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+                            <li><a href="http://weinimo.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate">atom feed</a></li>
+
+                            <li><a href="https://github.com/weinimo">github</a></li>
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                </address><!-- /#about -->
+
+                <p>The theme is by <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+        </footer><!-- /#contentinfo -->
+
+    <script type="text/javascript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-35922724-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+<script type="text/javascript">
+    var disqus_shortname = 'weiningernet';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'https://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+</body>
+</html>

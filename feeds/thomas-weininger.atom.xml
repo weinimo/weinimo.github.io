@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>weinimo.github.io - Thomas Weininger</title><link href="http://weinimo.github.io/" rel="alternate"></link><link href="http://weinimo.github.io/feeds/thomas-weininger.atom.xml" rel="self"></link><id>http://weinimo.github.io/</id><updated>2013-04-13T20:26:00+02:00</updated><entry><title>How to Write udev Rules for USB Devices</title><link href="http://weinimo.github.io/how-to-write-udev-rules-for-usb-devices.html" rel="alternate"></link><published>2013-04-13T20:26:00+02:00</published><updated>2013-04-13T20:26:00+02:00</updated><author><name>Thomas Weininger</name></author><id>tag:weinimo.github.io,2013-04-13:/how-to-write-udev-rules-for-usb-devices.html</id><summary type="html">&lt;p&gt;&lt;img alt="Udev-tux" src="https://upload.wikimedia.org/wikipedia/de/d/da/Udev-tux.png" /&gt;If you use a custom USB device for which there isn't a
+suitable udev rule installed on your system yet you might notice that
+only the root user has read and write access for it. In order to make it
+usable for normal users you need to write a new …&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;img alt="Udev-tux" src="https://upload.wikimedia.org/wikipedia/de/d/da/Udev-tux.png" /&gt;If you use a custom USB device for which there isn't a
+suitable udev rule installed on your system yet you might notice that
+only the root user has read and write access for it. In order to make it
+usable for normal users you need to write a new udev rule. Here is an
+easy way how to do this.&lt;/p&gt;
+&lt;p&gt;First we have to collect some information about that device. As we have
+an USB device in this example, we get some basic information from
+&lt;tt class="docutils literal"&gt;lsusb&lt;/tt&gt;. Its output must look something like this:&lt;/p&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;Bus 001 Device 003: ID 1111:2222 FooDev&lt;/tt&gt;&lt;/p&gt;
+&lt;p&gt;Now we know where in the Linux filesystem that device has been mounted:&lt;/p&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;/dev/bus/usb/001/003&lt;/tt&gt;&lt;/p&gt;
+&lt;p&gt;We can use this path now to ask udev about how it sees the device:&lt;/p&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;udevadm info &lt;span class="pre"&gt;-a&lt;/span&gt; &lt;span class="pre"&gt;-p&lt;/span&gt; $(udevadm info &lt;span class="pre"&gt;-q&lt;/span&gt; path &lt;span class="pre"&gt;-n&lt;/span&gt; /dev/bus/usb/001/003)&lt;/tt&gt;&lt;/p&gt;
+&lt;p&gt;Maybe you have to use &lt;tt class="docutils literal"&gt;udevinfo&lt;/tt&gt; instead of &lt;tt class="docutils literal"&gt;udevadm info&lt;/tt&gt;. The
+output should look like this:&lt;/p&gt;
+&lt;pre class="code text literal-block"&gt;
+looking at device '/devices/pci0000:00/0000:00:06.0/usb1/1-2':
+    KERNEL==&amp;quot;1-2&amp;quot;
+    SUBSYSTEM==&amp;quot;usb&amp;quot;
+    DRIVER==&amp;quot;usb&amp;quot;
+    ATTR{bDeviceSubClass}==&amp;quot;00&amp;quot;
+    ATTR{bDeviceProtocol}==&amp;quot;00&amp;quot;
+    ATTR{devpath}==&amp;quot;2&amp;quot;
+    ATTR{idVendor}==&amp;quot;1111&amp;quot;
+    ATTR{speed}==&amp;quot;12&amp;quot;
+    ATTR{bNumInterfaces}==&amp;quot; 1&amp;quot;
+    ATTR{bConfigurationValue}==&amp;quot;1&amp;quot;
+    ATTR{bMaxPacketSize0}==&amp;quot;64&amp;quot;
+    ATTR{busnum}==&amp;quot;1&amp;quot;
+    ATTR{devnum}==&amp;quot;3&amp;quot;
+    ATTR{configuration}==&amp;quot;&amp;quot;
+    ATTR{bMaxPower}==&amp;quot;500mA&amp;quot;
+    ATTR{authorized}==&amp;quot;1&amp;quot;
+    ATTR{bmAttributes}==&amp;quot;80&amp;quot;
+    ATTR{bNumConfigurations}==&amp;quot;1&amp;quot;
+    ATTR{maxchild}==&amp;quot;0&amp;quot;
+    ATTR{bcdDevice}==&amp;quot;0106&amp;quot;
+    ATTR{avoid_reset_quirk}==&amp;quot;0&amp;quot;
+    ATTR{quirks}==&amp;quot;0x0&amp;quot;
+    ATTR{serial}==&amp;quot; 10T7371 9028039&amp;quot;
+    ATTR{version}==&amp;quot; 1.10&amp;quot;
+    ATTR{urbnum}==&amp;quot;10&amp;quot;
+    ATTR{ltm_capable}==&amp;quot;no&amp;quot;
+    ATTR{manufacturer}==&amp;quot;Foo Inc&amp;quot;
+    ATTR{removable}==&amp;quot;unknown&amp;quot;
+    ATTR{idProduct}==&amp;quot;2222&amp;quot;
+    ATTR{bDeviceClass}==&amp;quot;00&amp;quot;
+    ATTR{product}==&amp;quot;Some FooDev&amp;quot;
+&lt;/pre&gt;
+&lt;p&gt;With this information we can finally start writing the new udev rule. We do this
+by creating a new file:&lt;/p&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;vim &lt;span class="pre"&gt;/etc/udev/rules.d/10-local.rules&lt;/span&gt;&lt;/tt&gt;&lt;/p&gt;
+&lt;p&gt;For instance if we would like to give everyone in the group &amp;quot;users&amp;quot; read
+and write access to the device, we put following line in that file:&lt;/p&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;SUBSYSTEMS==&amp;quot;usb&amp;quot;,&lt;/span&gt; &lt;span class="pre"&gt;ATTRS{product}==&amp;quot;Some&lt;/span&gt; FooDev&amp;quot;, &lt;span class="pre"&gt;GROUP=&amp;quot;users&amp;quot;&lt;/span&gt;&lt;/tt&gt;&lt;/p&gt;
+&lt;p&gt;Please note that it's ATTRS in the rules file, not ATTR.&lt;/p&gt;
+&lt;p&gt;Now we can test the new rule. For this we need the /devices/... path
+from the &lt;tt class="docutils literal"&gt;udevadm info&lt;/tt&gt; output from before.&lt;/p&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;udevadm test &lt;span class="pre"&gt;/devices/pci0000:00/0000:00:06.0/usb1/1-2&lt;/span&gt;&lt;/tt&gt;&lt;/p&gt;
+&lt;p&gt;Like before, you might have to use &lt;tt class="docutils literal"&gt;udevtest&lt;/tt&gt; instead of
+&lt;tt class="docutils literal"&gt;udevadm test&lt;/tt&gt;. The output should also contain information about the
+permissions for this device:&lt;/p&gt;
+&lt;p&gt;&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;[...]&lt;/span&gt; handling device node '/dev/bus/usb/001/003', devnum=c189:2, mode=0664, uid=0, gid=100 set permissions /dev/bus/usb/001/003, 020664, uid=0, gid=100 &lt;span class="pre"&gt;[...]&lt;/span&gt;&lt;/tt&gt;&lt;/p&gt;
+&lt;p&gt;gid=100 is the group id of the &amp;quot;users&amp;quot; group. So this is the proof that
+it works.&lt;/p&gt;
+&lt;p&gt;If your rule was not applied although it seems to be correct, chances
+are good that it has been overridden by another rule. In that case use
+the &amp;quot;:=&amp;quot; operator instead of &amp;quot;=&amp;quot;. This tells udev not to override this
+property.&lt;/p&gt;
+</content><category term="Linux"></category><category term="udev"></category><category term="USB"></category></entry><entry><title>NGINX Configuration for Gitweb and git-http-backend</title><link href="http://weinimo.github.io/configuration-of-nginx-for-gitweb-and-git-http-backend.html" rel="alternate"></link><published>2012-12-15T13:55:00+01:00</published><updated>2012-12-15T13:55:00+01:00</updated><author><name>Thomas Weininger</name></author><id>tag:weinimo.github.io,2012-12-15:/configuration-of-nginx-for-gitweb-and-git-http-backend.html</id><summary type="html">&lt;p&gt;Gitweb is a nice web interface for Git repositories. For instance go
+to&amp;nbsp;&lt;a class="reference external" href="http://git.kernel.org/"&gt;http://git.kernel.org/&lt;/a&gt;&amp;nbsp;to see how it looks like. I find it useful
+especially when I'm using the machine of somebody else and need to check out
+some files from one of my own repositories. git-http-backend …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Gitweb is a nice web interface for Git repositories. For instance go
+to&amp;nbsp;&lt;a class="reference external" href="http://git.kernel.org/"&gt;http://git.kernel.org/&lt;/a&gt;&amp;nbsp;to see how it looks like. I find it useful
+especially when I'm using the machine of somebody else and need to check out
+some files from one of my own repositories. git-http-backend allows me
+to clone git repositories over HTTPS so I don't have to use SSH.&lt;/p&gt;
+&lt;p&gt;First you have to prepare your repositories on your server for accessing
+them via HTTPS. I would recommend to create an extra user &amp;quot;git&amp;quot; for it.
+In this example I put my repositories to /home/git/repositories.
+Basically you can put them where you want.&lt;/p&gt;
+&lt;pre class="code sh literal-block"&gt;
+useradd -m git
+su git
+git clone --bare /old/repo.git /home/git/repositories/repo.git
+&lt;span class="nb"&gt;cd&lt;/span&gt; /home/git/repositories/repo.git
+sudo chmod -R g+ws .    &lt;span class="c1"&gt;# Setting necessary rights for pushing to the repository.
+&lt;/span&gt;sudo chgrp -R git .
+&lt;/pre&gt;
+&lt;p&gt;Now configure your repositories:&lt;/p&gt;
+&lt;pre class="code sh literal-block"&gt;
+git --bare update-server-info
+cp hooks/post-update.sample hooks/post-update
+chmod a+x hooks/post-update
+&lt;/pre&gt;
+&lt;p&gt;This generates all the information that is necessary to share the
+repository using a webserver like NGINX.&lt;/p&gt;
+&lt;p&gt;I found a nice tutorial about how to set up NGINX for gitweb and
+git-http-backend &lt;a class="reference external" href="http://eatabrick.org/20120126_gitweb_nginx.html"&gt;here&lt;/a&gt;. It almost worked out-of-the-box for me. I just
+had to add following lines to fix some errors I got when I tried to work
+with git-http-backend.&lt;/p&gt;
+&lt;pre class="code text literal-block"&gt;
+fastcgi_param GIT_HTTP_EXPORT_ALL &amp;quot;&amp;quot;;
+fastcgi_param REMOTE_USER $remote_user;
+&lt;/pre&gt;
+&lt;p&gt;Furthermore, I&amp;nbsp;have added the auth_basic lines to restrict the access to
+my repositories. The configuration shown below has been tested with
+Ubuntu 12.04.&lt;/p&gt;
+&lt;p&gt;But first make sure you have all required packages installed:&lt;/p&gt;
+&lt;pre class="code text literal-block"&gt;
+(sudo) apt-get install git gitweb fcgiwrap
+&lt;/pre&gt;
+&lt;p&gt;Here is my NGINX configuration file for Gitweb and git-http-backend. It
+allows access only using HTTPS and asks for authentication both for the
+web interface and for cloning the repositories. It works basically like
+the .htaccess authentication mechanism from Apache.&lt;/p&gt;
+&lt;pre class="code text literal-block"&gt;
+server {
+    listen      80;
+    server_name git.weinimo.de;
+    access_log /var/log/nginx/git.weinimo.de.access.log;
+    rewrite     ^   https://$server_name$request_uri? permanent;
+}
+
+# HTTPS server
+#
+server {
+    listen       443;
+    server_name  git.weinimo.de;
+    root /usr/share/gitweb;
+    access_log /var/log/nginx/git.weinimo.de.access.log;
+
+    ssl                  on;
+    ssl_certificate      /etc/ssl/certs/certforyoursite.crt;
+    ssl_certificate_key  /etc/ssl/private/sitekey.pem;
+    ssl_session_timeout 5m;
+    ssl_protocols        TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers          HIGH:!ADH:!MD5;
+    ssl_prefer_server_ciphers on;
+
+    auth_basic           &amp;quot;RESTRICTED ACCESS&amp;quot;;
+    auth_basic_user_file /etc/nginx/access_list;
+
+    # static repo files for cloning over https
+    location ~ ^.*\.git/objects/([0-9a-f]+/[0-9a-f]+|pack/pack-[0-9a-f]+.(pack|idx))$ {
+        root /home/git/repositories/;
+    }
+
+    # requests that need to go to git-http-backend
+    location ~ ^.*\.git/(HEAD|info/refs|objects/info/.*|git-(upload|receive)-pack)$ {
+        root /home/git/repositories;
+
+        fastcgi_pass unix:/var/run/fcgiwrap.socket;
+        fastcgi_param SCRIPT_FILENAME   /usr/lib/git-core/git-http-backend;
+        fastcgi_param PATH_INFO         $uri;
+        fastcgi_param GIT_PROJECT_ROOT  /home/git/repositories;
+        fastcgi_param GIT_HTTP_EXPORT_ALL &amp;quot;&amp;quot;;
+        fastcgi_param REMOTE_USER $remote_user;
+        include fastcgi_params;
+    }
+
+    # send anything else to gitweb if it's not a real file
+    try_files $uri &amp;#64;gitweb;
+    location &amp;#64;gitweb {
+        fastcgi_pass unix:/var/run/fcgiwrap.socket;
+        fastcgi_param SCRIPT_FILENAME   /usr/share/gitweb/gitweb.cgi;
+        fastcgi_param PATH_INFO         $uri;
+        fastcgi_param GITWEB_CONFIG     /etc/gitweb.conf;
+        include fastcgi_params;
+   }
+}
+&lt;/pre&gt;
+&lt;div class="line-block"&gt;
+&lt;div class="line"&gt;&lt;strong&gt;Update1:&lt;/strong&gt; I had to add the line&amp;nbsp;fastcgi_param REMOTE_USER&lt;/div&gt;
+&lt;div class="line"&gt;$remote_user;&amp;nbsp;to the NGINX configuration to fix the 403 errors I got&lt;/div&gt;
+&lt;div class="line"&gt;when trying to push changes to the server. This is necessary because I&lt;/div&gt;
+&lt;div class="line"&gt;use HTTP authentification. I also added some commands for preparing the&lt;/div&gt;
+&lt;div class="line"&gt;repositories for git-http-backend.&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="line-block"&gt;
+&lt;div class="line"&gt;&lt;strong&gt;Update2:&lt;/strong&gt; Added a section for setting up the repository file modes&lt;/div&gt;
+&lt;div class="line"&gt;to prevent the &amp;quot;remote: error: insufficient permission for adding an&lt;/div&gt;
+&lt;div class="line"&gt;object to repository database ./objects&amp;quot; error when trying to push to&lt;/div&gt;
+&lt;div class="line"&gt;the repository.&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="line-block"&gt;
+&lt;div class="line"&gt;&lt;strong&gt;Update3:&lt;/strong&gt; Disabled SSL and enabled TLS1.1 and TLS1.2 support.&lt;/div&gt;
+&lt;div class="line"&gt;Thanks for your comment itefixnet.&lt;/div&gt;
+&lt;/div&gt;
+</content><category term="Development"></category><category term="Git"></category><category term="Linux"></category></entry><entry><title>Streaming video files to Samsung TVs (Part 2)</title><link href="http://weinimo.github.io/streaming-video-files-to-samsung-tvs-part-2.html" rel="alternate"></link><published>2012-06-15T20:49:00+02:00</published><updated>2012-06-15T20:49:00+02:00</updated><author><name>Thomas Weininger</name></author><id>tag:weinimo.github.io,2012-06-15:/streaming-video-files-to-samsung-tvs-part-2.html</id><summary type="html">&lt;p&gt;The second (and final) part of my article series about streaming video
+files to Samsung TVs describes which video and audio codecs as well as
+which container formats to choose for playing back video files on
+Samsung devices (tested with UE40D6200). Furthermore I'll show you a
+Ruby program I wrote …&lt;/p&gt;</summary><content type="html">&lt;p&gt;The second (and final) part of my article series about streaming video
+files to Samsung TVs describes which video and audio codecs as well as
+which container formats to choose for playing back video files on
+Samsung devices (tested with UE40D6200). Furthermore I'll show you a
+Ruby program I wrote for transcoding files automatically to the right
+format.&lt;/p&gt;
+&lt;p&gt;I have many files like Flash video files from YouTube, recorded MPEG2
+transport streams from my PVR and other media files my TV doesn't
+understand or doesn't support very well. Unfortunately, many of them
+must be transcoded to another format which is more suitable for the TVs
+DLNA function. To find the best formats for the conversation I've
+started a series of tests. I took a video file and transcoded it using
+many different video and audio codecs and container formats and checked
+their compatibility with Samsungs SmartHub. To keep this article short,
+I show you only the summary of my tests instead of the full results. In
+short that is:&lt;/p&gt;
+&lt;p&gt;Video codecs that don't need to be converted:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;H264&lt;/li&gt;
+&lt;li&gt;MPEG4&lt;/li&gt;
+&lt;li&gt;WMV3&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Audio codecs that don't need to be converted:&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;MP3&lt;/li&gt;
+&lt;li&gt;AAC&lt;/li&gt;
+&lt;li&gt;AC3&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;My investigation showed that both the Matroska (.mkv) and the MPEG4
+(.mp4) container formats are most suiteable for my scenario.&lt;/p&gt;
+&lt;p&gt;Above stated rules are simplified as there are also other constraints to
+consider when trying to make ones video collection ready for streaming.
+I wrote a sweet little Ruby program that is much more sophisticated and
+takes care of most codecs and handles them the right way automatically.
+It scans given paths or single video files and converts them if
+necessary. One goal while designing the tool was to keep the original
+quality of the files whenever possible. To achieve this it handles the
+audio and video stream of the file independently from each other and
+transcodes only those parts that need to be converted. So for instance
+if the video stream needs to be converted, but the audio stream does
+not, it only changes the video stream and takes the audio track from the
+original file.&lt;/p&gt;
+&lt;p&gt;My program depends on FFMPEG and the Ruby package &lt;a class="reference external" href="https://github.com/streamio/streamio-ffmpeg"&gt;streamio-ffmpeg&lt;/a&gt;.
+You can install it using gem via:&lt;/p&gt;
+&lt;pre class="code text literal-block"&gt;
+(sudo) gem install streamio-ffmpeg
+&lt;/pre&gt;
+&lt;p&gt;It's also important that your FFMPEG installation supports libfaac
+encoding. To check this simply type &amp;quot;ffmpeg&amp;quot; in your terminal. If there
+is a line &amp;quot;libfaac&amp;quot; with an &amp;quot;E&amp;quot; in one of the columns before the codec
+name, then everything is fine.&lt;/p&gt;
+&lt;p&gt;I think the code is pretty selfexplaining. It's far from perfect, but in
+practice it works very well. Usage is simple:&lt;/p&gt;
+&lt;pre class="code text literal-block"&gt;
+ffautoconv.rb &amp;lt;file(s)/path(s) to scan&amp;gt;
+&lt;/pre&gt;
+&lt;p&gt;It writes a logfile to /tmp/ffautoconv.log while running so it's
+possible to reconstruct what the program was doing.&lt;/p&gt;
+&lt;p&gt;Please leave a comment if you have a suggestion or simply found my
+program useful. Here's the download link: &lt;a class="reference external" href="http://weininger.net/wp-content/uploads/2012/06/ffautoconv.gz"&gt;ffautoconv&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class="code ruby literal-block"&gt;
+&lt;span class="ch"&gt;#!/usr/bin/env ruby&lt;/span&gt;
+&lt;span class="c1"&gt;# ffautoconv.rb: Program for transcoding videos for streaming them to Samsung TVs.&lt;/span&gt;
+&lt;span class="c1"&gt;# Author: Thomas Weininger (http://blog.weinimo.de)&lt;/span&gt;
+&lt;span class="c1"&gt;# This program is free software: you can redistribute it and/or modify it under the terms of the BSD license.&lt;/span&gt;
+
+&lt;span class="nb"&gt;require&lt;/span&gt; &lt;span class="s1"&gt;'find'&lt;/span&gt;
+&lt;span class="nb"&gt;require&lt;/span&gt; &lt;span class="s1"&gt;'rubygems'&lt;/span&gt;
+&lt;span class="nb"&gt;require&lt;/span&gt; &lt;span class="s1"&gt;'streamio-ffmpeg'&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;containerChange&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;container&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;extname&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;!=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;.&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;container&lt;/span&gt;
+    &lt;span class="vg"&gt;$logfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;New container of  &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; will be: &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;container&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;.
+     &lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s2"&gt;  Original file: &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;video_codec&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;, acodec: &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;audio_codec&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;newfilename&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;chomp&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;extname&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;.&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;container&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+    &lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;transcode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;newfilename&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;-vcodec copy -acodec copy -copyts&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Check whether container change was successful.&lt;/span&gt;
+    &lt;span class="n"&gt;newmovie&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;FFMPEG&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;Movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;newfilename&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;newmovie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;valid?&lt;/span&gt;
+      &lt;span class="vg"&gt;$logfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;  Container format changed successfully. Deleting &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;filename&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;.&lt;/span&gt;&lt;span class="se"&gt;\n\n&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;delete&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;
+      &lt;span class="vg"&gt;$logfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;  Error occured while trying to change the container format. Deleting &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;newfilename&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;.&lt;/span&gt;&lt;span class="se"&gt;\n\n&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;delete&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;newfilename&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+  &lt;span class="k"&gt;else&lt;/span&gt;
+    &lt;span class="vg"&gt;$logfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Container of &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;filename&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot; doesn't have to be changed&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+      &lt;span class="s2"&gt;&amp;quot;.&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s2"&gt;  Original file: &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;video_codec&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;, acodec: &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;audio_codec&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;.&lt;/span&gt;&lt;span class="se"&gt;\n\n&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;reencode&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;acodec&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;vcodec&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;container&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="c1"&gt;# Decide whether we need to transcode or only a container change.&lt;/span&gt;
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;audio_codec&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;nil?&lt;/span&gt;                                                     &lt;span class="c1"&gt;# Prevent NoMethodError if no audio track is available.&lt;/span&gt;
+    &lt;span class="n"&gt;orig_acodec&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&amp;quot;&lt;/span&gt;
+  &lt;span class="k"&gt;else&lt;/span&gt;
+    &lt;span class="n"&gt;orig_acodec&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;audio_codec&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+
+  &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;orig_acodec&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;match&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sr"&gt;/^&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;acodec&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="sr"&gt;(.*)/&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;video_codec&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;match&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sr"&gt;/^&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;vcodec&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="sr"&gt;(.*)/&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt;
+       &lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;acodec&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;copy&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;vcodec&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;copy&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;containerChange&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;container&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="k"&gt;else&lt;/span&gt;
+    &lt;span class="vg"&gt;$logfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;New Codecs of &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; will be: &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;vcodec&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;, &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;acodec&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;, &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;container&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;.&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt;
+      &lt;span class="s2"&gt;&amp;quot;  Original file: &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;video_codec&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;, acodec: &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;audio_codec&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;.&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="vg"&gt;$logfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;flush&lt;/span&gt;
+    &lt;span class="n"&gt;newfilename&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;chomp&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;extname&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;.&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;container&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+    &lt;span class="n"&gt;options&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="ss"&gt;:threads&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+    &lt;span class="n"&gt;customopts&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&amp;quot;&lt;/span&gt;
+
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;video_codec&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;match&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sr"&gt;/^&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;vcodec&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="sr"&gt;(.*)/&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="n"&gt;vcodec&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;copy&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;        &lt;span class="c1"&gt;# Can we use the video track from the original file?&lt;/span&gt;
+      &lt;span class="n"&gt;customopts&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;customopts&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; -copyts&amp;quot;&lt;/span&gt;
+      &lt;span class="n"&gt;options&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;options&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;merge&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="ss"&gt;:video_codec&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;copy&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:custom&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;customopts&lt;/span&gt; &lt;span class="p"&gt;})&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;
+      &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;vcodec&lt;/span&gt;
+      &lt;span class="k"&gt;when&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;h264&amp;quot;&lt;/span&gt;
+        &lt;span class="n"&gt;customopts&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;customopts&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; -qscale 0&amp;quot;&lt;/span&gt;
+        &lt;span class="n"&gt;options&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;options&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;merge&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="ss"&gt;:video_codec&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;libx264&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:custom&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;customopts&lt;/span&gt; &lt;span class="p"&gt;})&lt;/span&gt;
+      &lt;span class="k"&gt;end&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt; &lt;span class="n"&gt;orig_acodec&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;match&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sr"&gt;/^&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;acodec&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="sr"&gt;(.*)/&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;||&lt;/span&gt; &lt;span class="n"&gt;acodec&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;copy&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;)&lt;/span&gt;        &lt;span class="c1"&gt;# Can we use the audio track from the original file?&lt;/span&gt;
+      &lt;span class="n"&gt;options&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;options&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;merge&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="ss"&gt;:audio_codec&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;copy&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;})&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;
+      &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;acodec&lt;/span&gt;
+      &lt;span class="k"&gt;when&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;aac&amp;quot;&lt;/span&gt;
+        &lt;span class="n"&gt;customopts&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;customopts&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; -aq 120&amp;quot;&lt;/span&gt;
+        &lt;span class="n"&gt;options&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;options&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;merge&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt; &lt;span class="ss"&gt;:audio_codec&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;libfaac&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;:custom&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;customopts&lt;/span&gt; &lt;span class="p"&gt;})&lt;/span&gt;
+      &lt;span class="k"&gt;end&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+
+    &lt;span class="k"&gt;begin&lt;/span&gt;
+      &lt;span class="nb"&gt;puts&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s2"&gt;Transcoding: &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;.&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;
+      &lt;span class="n"&gt;beginning_time&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;now&lt;/span&gt;
+      &lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;transcode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;newfilename&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;options&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;progress&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="nb"&gt;print&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="se"&gt;\r&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="nb"&gt;Integer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;progress&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;%&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+      &lt;span class="n"&gt;total_secs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Time&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;now&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;beginning_time&lt;/span&gt;
+      &lt;span class="n"&gt;combined_mins&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;total_secs&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="mi"&gt;60&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;floor&lt;/span&gt;
+      &lt;span class="n"&gt;combined_secs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;total_secs&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;60&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;floor&lt;/span&gt;
+      &lt;span class="vg"&gt;$logfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;  Time elapsed: &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;combined_mins&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; minutes, &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;combined_secs&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; seconds (&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;total_secs&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; seconds).&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;rescue&lt;/span&gt; &lt;span class="no"&gt;RuntimeError&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;e&lt;/span&gt;
+      &lt;span class="vg"&gt;$logfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;  RUNTIME ERROR occured!!!&lt;/span&gt;&lt;span class="se"&gt;\n\n&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="k"&gt;return&lt;/span&gt;
+    &lt;span class="k"&gt;rescue&lt;/span&gt; &lt;span class="no"&gt;Interrupt&lt;/span&gt; &lt;span class="o"&gt;=&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;e&lt;/span&gt;
+      &lt;span class="nb"&gt;puts&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;SIGINT caught. Deleting &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;newfilename&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt; and exiting after that.&amp;quot;&lt;/span&gt;
+      &lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;delete&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;newfilename&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="nb"&gt;exit&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+
+    &lt;span class="c1"&gt;# Check whether transcoding was successful.&lt;/span&gt;
+    &lt;span class="n"&gt;newmovie&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;FFMPEG&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;Movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;newfilename&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;newmovie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;valid?&lt;/span&gt;
+      &lt;span class="vg"&gt;$logfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;  Transcoding completed successfully. Deleting &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;filename&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;.&lt;/span&gt;&lt;span class="se"&gt;\n\n&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;delete&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;
+      &lt;span class="vg"&gt;$logfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;  Error occured while transcoding. Deleting &amp;quot;&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;newfilename&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;.&lt;/span&gt;&lt;span class="se"&gt;\n\n&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;delete&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;newfilename&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+
+&lt;span class="vg"&gt;$logfile&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;/tmp/ffautoconv.log&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;WRONLY&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;TRUNC&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;CREAT&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;APPEND&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="no"&gt;FFMPEG&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;logger&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;level&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;Logger&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;WARN&lt;/span&gt;
+
+&lt;span class="no"&gt;ARGV&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;each&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;
+  &lt;span class="no"&gt;Find&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;find&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="o"&gt;|&lt;/span&gt;
+    &lt;span class="n"&gt;movie&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;FFMPEG&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="no"&gt;Movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;new&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;valid?&lt;/span&gt;
+      &lt;span class="n"&gt;dstACodec&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;copy&amp;quot;&lt;/span&gt;                                                        &lt;span class="c1"&gt;# Always use the old audio track.&lt;/span&gt;
+
+      &lt;span class="c1"&gt;# Decide new video codec depending on the video codec of the original file.&lt;/span&gt;
+      &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;video_codec&lt;/span&gt;
+      &lt;span class="k"&gt;when&lt;/span&gt; &lt;span class="sr"&gt;/^h264(.*)/&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sr"&gt;/^mpeg4(.*)/&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sr"&gt;/^wmv3(.*)/&lt;/span&gt;                               &lt;span class="c1"&gt;# Video codecs that don't need to be transcoded.&lt;/span&gt;
+        &lt;span class="n"&gt;dstVCodec&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;copy&amp;quot;&lt;/span&gt;
+      &lt;span class="k"&gt;when&lt;/span&gt; &lt;span class="sr"&gt;/^flv(.*)/&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sr"&gt;/^vp6f(.*)/&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sr"&gt;/^msmpeg4(.*)/&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sr"&gt;/^theora(.*)/&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+           &lt;span class="sr"&gt;/^wmv1(.*)/&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sr"&gt;/^wmv2(.*)/&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sr"&gt;/^vc1(.*)/&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sr"&gt;/^rv40(.*)/&lt;/span&gt;                    &lt;span class="c1"&gt;# Video codecs that need to be transcoded.&lt;/span&gt;
+        &lt;span class="n"&gt;dstVCodec&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;h264&amp;quot;&lt;/span&gt;
+      &lt;span class="k"&gt;when&lt;/span&gt; &lt;span class="sr"&gt;/^mpeg2video(.*)/&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sr"&gt;/^mpeg1video(.*)/&lt;/span&gt;                                 &lt;span class="c1"&gt;# MPEG videos need special treatment.&lt;/span&gt;
+      &lt;span class="k"&gt;when&lt;/span&gt; &lt;span class="sr"&gt;/^mjpeg(.*)/&lt;/span&gt;
+        &lt;span class="k"&gt;next&lt;/span&gt;
+      &lt;span class="k"&gt;else&lt;/span&gt;
+        &lt;span class="vg"&gt;$logfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;write&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;: vcodec not handled: &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;video_codec&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;, acodec: &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;audio_codec&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="se"&gt;\n\n&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+        &lt;span class="k"&gt;next&lt;/span&gt;
+      &lt;span class="k"&gt;end&lt;/span&gt;
+
+      &lt;span class="c1"&gt;# Decide which container format we should take depending on the audio codec of the original file.&lt;/span&gt;
+      &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;audio_codec&lt;/span&gt;
+      &lt;span class="k"&gt;when&lt;/span&gt; &lt;span class="kp"&gt;nil&lt;/span&gt;&lt;span class="sc"&gt;?,&lt;/span&gt; &lt;span class="sr"&gt;/aac(.*)/&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sr"&gt;/mp3(.*)/&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sr"&gt;/ac3(.*)/&lt;/span&gt;                                &lt;span class="c1"&gt;# ffmpeg mp4 does NOT support WMA, but wmv does. See http://en.wikipedia.org/wiki/Comparison_of_container_formats&lt;/span&gt;
+        &lt;span class="n"&gt;dstACodec&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;aac&amp;quot;&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;video_codec&lt;/span&gt; &lt;span class="o"&gt;=~&lt;/span&gt; &lt;span class="sr"&gt;/^vp6f(.*)/&lt;/span&gt;
+        &lt;span class="c1"&gt;# Change container for audio formats that are supported by the mp4 container.&lt;/span&gt;
+        &lt;span class="n"&gt;dstContainer&lt;/span&gt; &lt;span class="o"&gt;||=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;mp4&amp;quot;&lt;/span&gt;
+      &lt;span class="k"&gt;when&lt;/span&gt; &lt;span class="sr"&gt;/cook(.*)/&lt;/span&gt;
+        &lt;span class="n"&gt;dstACodec&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;aac&amp;quot;&lt;/span&gt;
+        &lt;span class="n"&gt;dstContainer&lt;/span&gt; &lt;span class="o"&gt;||=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;mp4&amp;quot;&lt;/span&gt;
+      &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="c1"&gt;# wmav2, sipr&lt;/span&gt;
+        &lt;span class="c1"&gt;# Matroska offers the best format support for all possible audio codecs.&lt;/span&gt;
+        &lt;span class="n"&gt;dstContainer&lt;/span&gt; &lt;span class="o"&gt;||=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;mkv&amp;quot;&lt;/span&gt;
+      &lt;span class="k"&gt;end&lt;/span&gt;
+
+      &lt;span class="n"&gt;reencode&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;movie&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dstACodec&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dstVCodec&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dstContainer&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="vg"&gt;$logfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;flush&lt;/span&gt;
+    &lt;span class="k"&gt;end&lt;/span&gt;
+  &lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="k"&gt;end&lt;/span&gt;
+&lt;span class="vg"&gt;$logfile&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;close&lt;/span&gt;
+&lt;/pre&gt;
+</content><category term="DLNA"></category><category term="Linux"></category><category term="Ruby"></category><category term="Samsung TV"></category></entry><entry><title>How to keep apt-get and aptitude from switching repositories when upgrading a certain package</title><link href="http://weinimo.github.io/how-to-keep-apt-get-and-aptitude-from-switching-repositories-when-upgrading-a-certain-package.html" rel="alternate"></link><published>2012-05-17T18:30:00+02:00</published><updated>2012-05-17T18:30:00+02:00</updated><author><name>Thomas Weininger</name></author><id>tag:weinimo.github.io,2012-05-17:/how-to-keep-apt-get-and-aptitude-from-switching-repositories-when-upgrading-a-certain-package.html</id><summary type="html">&lt;p&gt;Today, after the usual&lt;/p&gt;
+&lt;pre class="code text literal-block"&gt;
+apt-get update; apt-get upgrade
+&lt;/pre&gt;
+&lt;p&gt;procedure on my Debian box, I noticed that FFMPEG wasn't working as
+expected anymore. It happend that the upgrade installed a new version of
+FFMPEG from the official Debian repositories, while I had used the
+deb-multimedia.org repository for this package before …&lt;/p&gt;</summary><content type="html">&lt;p&gt;Today, after the usual&lt;/p&gt;
+&lt;pre class="code text literal-block"&gt;
+apt-get update; apt-get upgrade
+&lt;/pre&gt;
+&lt;p&gt;procedure on my Debian box, I noticed that FFMPEG wasn't working as
+expected anymore. It happend that the upgrade installed a new version of
+FFMPEG from the official Debian repositories, while I had used the
+deb-multimedia.org repository for this package before. The official
+Debian package lacks support for libfaac. However, I had to switch back
+to the old package. Here is how I've done this.&lt;/p&gt;
+&lt;p&gt;APT allows to set priorities for certain repositories and packages.
+Debian calls this feature &amp;quot;APT pinning&amp;quot;.Â&amp;nbsp;All I had to do was to set the
+priority for the FFMPEG related packages from deb-multimedia.org to
+values &amp;gt;1000 to make apt always install FFMPEG from there. To do this,
+just create a new file inÂ&amp;nbsp;/etc/apt/preferences.d. I called that file
+deb-multimedia. Here are the contents of the new file:&lt;/p&gt;
+&lt;pre class="code text literal-block"&gt;
+Package: ffmpeg
+Pin: origin www.debian-multimedia.org
+Pin-Priority: 1001
+&lt;/pre&gt;
+&lt;p&gt;Basically it says: &amp;quot;Use the www.debian-multimedia.org repository for the
+ffmpeg package no matter what.&amp;quot;. Debian plans to replace ffmpeg with
+libav in future releases, so I additionally made APT never ever install
+libav by creating another file inÂ&amp;nbsp;/etc/apt/preferences.d:&lt;/p&gt;
+&lt;pre class="code text literal-block"&gt;
+Package: libav-tools
+Pin: origin &amp;quot;&amp;quot;
+Pin-Priority: -1
+&lt;/pre&gt;
+&lt;p&gt;Pin-Priority: -1 tells APT to never install that package. After these
+few steps it is possible to switch to the old repository by simple
+reinstalling the packages. Great work Debian, thank you for this!&lt;/p&gt;
+</content><category term="APT"></category><category term="Debian"></category><category term="Linux"></category></entry><entry><title>Streaming video files to Samsung TVs (Part 1)</title><link href="http://weinimo.github.io/streaming-video-files-to-samsung-tvs-part-1.html" rel="alternate"></link><published>2012-05-12T18:31:00+02:00</published><updated>2012-05-12T18:31:00+02:00</updated><author><name>Thomas Weininger</name></author><id>tag:weinimo.github.io,2012-05-12:/streaming-video-files-to-samsung-tvs-part-1.html</id><summary type="html">&lt;p&gt;&lt;a class="reference external" href="http://blog.weinimo.de/wp-content/uploads/2012/05/logo1.png"&gt;&lt;img alt="image0" src="http://blog.weinimo.de/wp-content/uploads/2012/05/logo1-300x79.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;I have a huge video archive on my NAS and I wanted to be able to stream
+the files to my Samsung TV UE40D6300 using its DLNA capability. Because
+TVs in general and the DLNA standard especially do not support many
+codecs it was clear to me that this goal …&lt;/p&gt;</summary><content type="html">&lt;p&gt;&lt;a class="reference external" href="http://blog.weinimo.de/wp-content/uploads/2012/05/logo1.png"&gt;&lt;img alt="image0" src="http://blog.weinimo.de/wp-content/uploads/2012/05/logo1-300x79.png" /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;I have a huge video archive on my NAS and I wanted to be able to stream
+the files to my Samsung TV UE40D6300 using its DLNA capability. Because
+TVs in general and the DLNA standard especially do not support many
+codecs it was clear to me that this goal may not be that easy to
+achieve.&lt;/p&gt;
+&lt;p&gt;I thought transcoding would solve my codec problems, so I installed
+&lt;a class="reference external" href="http://mediatomb.cc/"&gt;Mediatomb&lt;/a&gt; on my NAS. Unfortunately it hasn't. Instead It brought me
+some new problems. Suddenly I wasn't able to use the fast-forward
+function anymore. Furthermore I didn't like Mediatomb much, as it seems
+the developers stopped working on this project. So I searched for
+alternatives. &lt;a class="reference external" href="http://sourceforge.net/projects/minidlna/"&gt;MiniDLNA&lt;/a&gt; was a promising candidate, but it didn't
+support on-the-fly transcoding like Mediatomb did and I even noticed
+that some files that would play fine on my TV without any transcoding
+don't work with miniDLNA. It was clear that miniDLNA couldn't offer the
+functionality I needed.&lt;/p&gt;
+&lt;p&gt;For a long time I had no real solution for these issues and so my search
+for a better mediaserver continued. Finally I found a new project called
+&lt;a class="reference external" href="http://www.serviio.org/"&gt;Serviio&lt;/a&gt;. It hasn't been released under Open Source license yet, but
+it seemed to have (nearly) all the features I was searching for. It
+supports transcoding while it is still possible to jump forwards and
+backwards in many movies. Using profiles Serviio is able to adjust its
+behaviour depending on what client hardware you use. And Serviio even
+detects your hardware and sets the matching profile automatically.
+That's how software should work wherever possible - without any
+intervention of its user. Of course Serviio isn't perfect yet, eg. it
+seems to have problems with huge collections, but it's better than
+anything I've tried before. I strongly encourage everyone having similar
+problems to try Serviio out. It's a great piece of software.&lt;/p&gt;
+&lt;p&gt;Basically I was happy with my setup. I was able to watch all my movies
+from my NAS on my TV. But on-the-fly transcoding has a downside that
+still hindered the perfect streaming experience. It wasn't possible to
+use fast-forward wherever transcoding was necessary. I had to find out
+which codecs and which container formats my Samsung TV is able to play
+over DLNA, so I prepared a series of testvideos with different video and
+audio codecs and different container formats on my NAS to test it out.&lt;/p&gt;
+&lt;p&gt;The results of my investigations and my final approach for solving my
+streaming issues will be subject of my next posts.&lt;/p&gt;
+</content><category term="DLNA"></category><category term="Linux"></category><category term="NAS"></category><category term="Samsung TV"></category><category term="Serviio"></category></entry></feed>

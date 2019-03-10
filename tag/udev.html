@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <title>weinimo.github.io - udev</title>
+        <link rel="stylesheet" href="http://weinimo.github.io/theme/css/main.css" />
+        <link href="http://weinimo.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="weinimo.github.io Atom Feed" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="http://weinimo.github.io/">weinimo.github.io </a></h1>
+                <nav><ul>
+                    <li><a href="http://weinimo.github.io/category/free-software.html">Free Software</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+
+            <aside id="featured" class="body">
+                <article>
+                    <h1 class="entry-title"><a href="http://weinimo.github.io/how-to-write-udev-rules-for-usb-devices.html">How to Write udev Rules for USB Devices</a></h1>
+<footer class="post-info">
+        <abbr class="published" title="2013-04-13T20:26:00+02:00">
+                Published: Sa 13 April 2013
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="http://weinimo.github.io/author/thomas-weininger.html">Thomas Weininger</a>
+        </address>
+<p>In <a href="http://weinimo.github.io/category/free-software.html">Free Software</a>.</p>
+<p>tags: <a href="http://weinimo.github.io/tag/linux.html">Linux</a> <a href="http://weinimo.github.io/tag/udev.html">udev</a> <a href="http://weinimo.github.io/tag/usb.html">USB</a> </p>
+</footer><!-- /.post-info --><p><img alt="Udev-tux" src="https://upload.wikimedia.org/wikipedia/de/d/da/Udev-tux.png" />If you use a custom USB device for which there isn't a
+suitable udev rule installed on your system yet you might notice that
+only the root user has read and write access for it. In order to make it
+usable for normal users you need to write a new udev rule. Here is an
+easy way how to do this.</p>
+<p>First we have to collect some information about that device. As we have
+an USB device in this example, we get some basic information from
+<tt class="docutils literal">lsusb</tt>. Its output must look something like this:</p>
+<p><tt class="docutils literal">Bus 001 Device 003: ID 1111:2222 FooDev</tt></p>
+<p>Now we know where in the Linux filesystem that device has been mounted:</p>
+<p><tt class="docutils literal">/dev/bus/usb/001/003</tt></p>
+<p>We can use this path now to ask udev about how it sees the device:</p>
+<p><tt class="docutils literal">udevadm info <span class="pre">-a</span> <span class="pre">-p</span> $(udevadm info <span class="pre">-q</span> path <span class="pre">-n</span> /dev/bus/usb/001/003)</tt></p>
+<p>Maybe you have to use <tt class="docutils literal">udevinfo</tt> instead of <tt class="docutils literal">udevadm info</tt>. The
+output should look like this:</p>
+<pre class="code text literal-block">
+looking at device '/devices/pci0000:00/0000:00:06.0/usb1/1-2':
+    KERNEL==&quot;1-2&quot;
+    SUBSYSTEM==&quot;usb&quot;
+    DRIVER==&quot;usb&quot;
+    ATTR{bDeviceSubClass}==&quot;00&quot;
+    ATTR{bDeviceProtocol}==&quot;00&quot;
+    ATTR{devpath}==&quot;2&quot;
+    ATTR{idVendor}==&quot;1111&quot;
+    ATTR{speed}==&quot;12&quot;
+    ATTR{bNumInterfaces}==&quot; 1&quot;
+    ATTR{bConfigurationValue}==&quot;1&quot;
+    ATTR{bMaxPacketSize0}==&quot;64&quot;
+    ATTR{busnum}==&quot;1&quot;
+    ATTR{devnum}==&quot;3&quot;
+    ATTR{configuration}==&quot;&quot;
+    ATTR{bMaxPower}==&quot;500mA&quot;
+    ATTR{authorized}==&quot;1&quot;
+    ATTR{bmAttributes}==&quot;80&quot;
+    ATTR{bNumConfigurations}==&quot;1&quot;
+    ATTR{maxchild}==&quot;0&quot;
+    ATTR{bcdDevice}==&quot;0106&quot;
+    ATTR{avoid_reset_quirk}==&quot;0&quot;
+    ATTR{quirks}==&quot;0x0&quot;
+    ATTR{serial}==&quot; 10T7371 9028039&quot;
+    ATTR{version}==&quot; 1.10&quot;
+    ATTR{urbnum}==&quot;10&quot;
+    ATTR{ltm_capable}==&quot;no&quot;
+    ATTR{manufacturer}==&quot;Foo Inc&quot;
+    ATTR{removable}==&quot;unknown&quot;
+    ATTR{idProduct}==&quot;2222&quot;
+    ATTR{bDeviceClass}==&quot;00&quot;
+    ATTR{product}==&quot;Some FooDev&quot;
+</pre>
+<p>With this information we can finally start writing the new udev rule. We do this
+by creating a new file:</p>
+<p><tt class="docutils literal">vim <span class="pre">/etc/udev/rules.d/10-local.rules</span></tt></p>
+<p>For instance if we would like to give everyone in the group &quot;users&quot; read
+and write access to the device, we put following line in that file:</p>
+<p><tt class="docutils literal"><span class="pre">SUBSYSTEMS==&quot;usb&quot;,</span> <span class="pre">ATTRS{product}==&quot;Some</span> FooDev&quot;, <span class="pre">GROUP=&quot;users&quot;</span></tt></p>
+<p>Please note that it's ATTRS in the rules file, not ATTR.</p>
+<p>Now we can test the new rule. For this we need the /devices/... path
+from the <tt class="docutils literal">udevadm info</tt> output from before.</p>
+<p><tt class="docutils literal">udevadm test <span class="pre">/devices/pci0000:00/0000:00:06.0/usb1/1-2</span></tt></p>
+<p>Like before, you might have to use <tt class="docutils literal">udevtest</tt> instead of
+<tt class="docutils literal">udevadm test</tt>. The output should also contain information about the
+permissions for this device:</p>
+<p><tt class="docutils literal"><span class="pre">[...]</span> handling device node '/dev/bus/usb/001/003', devnum=c189:2, mode=0664, uid=0, gid=100 set permissions /dev/bus/usb/001/003, 020664, uid=0, gid=100 <span class="pre">[...]</span></tt></p>
+<p>gid=100 is the group id of the &quot;users&quot; group. So this is the proof that
+it works.</p>
+<p>If your rule was not applied although it seems to be correct, chances
+are good that it has been overridden by another rule. In that case use
+the &quot;:=&quot; operator instead of &quot;=&quot;. This tells udev not to override this
+property.</p>
+<p>There are <a href="http://weinimo.github.io/how-to-write-udev-rules-for-usb-devices.html#disqus_thread">comments</a>.</p>                </article>
+            </aside><!-- /#featured -->
+        <section id="extras" class="body">
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+                            <li><a href="http://weinimo.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate">atom feed</a></li>
+
+                            <li><a href="https://github.com/weinimo">github</a></li>
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                </address><!-- /#about -->
+
+                <p>The theme is by <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+        </footer><!-- /#contentinfo -->
+
+    <script type="text/javascript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-35922724-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+<script type="text/javascript">
+    var disqus_shortname = 'weiningernet';
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = 'https://' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+</script>
+</body>
+</html>
