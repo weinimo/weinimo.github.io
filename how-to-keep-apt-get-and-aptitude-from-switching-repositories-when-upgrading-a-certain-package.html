@@ -2,23 +2,25 @@
 <html lang="en">
 <head>
         <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="generator" content="Pelican" />
         <title>How to keep apt-get and aptitude from switching repositories when upgrading a certain package</title>
-        <link rel="stylesheet" href="https://weinimo.github.io/theme/css/main.css" />
-        <link href="https://weinimo.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="weinimo.github.io Atom Feed" />
+        <link rel="stylesheet" href="https://blog.weininger.net/theme/css/main.css" />
+        <meta name="description" content="Today, after the usual apt-get update; apt-get upgrade procedure on my Debian box, I noticed that FFMPEG wasn't working as expected anymore. It..." />
 </head>
 
 <body id="index" class="home">
         <header id="banner" class="body">
-                <h1><a href="https://weinimo.github.io/">weinimo.github.io </a></h1>
+                <h1><a href="https://blog.weininger.net/">blog.weininger.net</a></h1>
                 <nav><ul>
-                    <li class="active"><a href="https://weinimo.github.io/category/free-software.html">Free Software</a></li>
+                    <li class="active"><a href="https://blog.weininger.net/category/free-software.html">Free Software</a></li>
                 </ul></nav>
         </header><!-- /#banner -->
 <section id="content" class="body">
   <article>
     <header>
       <h1 class="entry-title">
-        <a href="https://weinimo.github.io/how-to-keep-apt-get-and-aptitude-from-switching-repositories-when-upgrading-a-certain-package.html" rel="bookmark"
+        <a href="https://blog.weininger.net/how-to-keep-apt-get-and-aptitude-from-switching-repositories-when-upgrading-a-certain-package.html" rel="bookmark"
            title="Permalink to How to keep apt-get and aptitude from switching repositories when upgrading a certain package">How to keep apt-get and aptitude from switching repositories when upgrading a certain package</a></h1>
     </header>
 
@@ -29,10 +31,10 @@
         </abbr>
 
         <address class="vcard author">
-                By                         <a class="url fn" href="https://weinimo.github.io/author/thomas-weininger.html">Thomas Weininger</a>
+                By                         <a class="url fn" href="https://blog.weininger.net/author/thomas-weininger.html">Thomas Weininger</a>
         </address>
-<p>In <a href="https://weinimo.github.io/category/free-software.html">Free Software</a>.</p>
-<p>tags: <a href="https://weinimo.github.io/tag/apt.html">APT</a> <a href="https://weinimo.github.io/tag/debian.html">Debian</a> <a href="https://weinimo.github.io/tag/linux.html">Linux</a> </p>
+<p>In <a href="https://blog.weininger.net/category/free-software.html">Free Software</a>.</p>
+<p>tags: <a href="https://blog.weininger.net/tag/apt.html">APT</a> <a href="https://blog.weininger.net/tag/debian.html">Debian</a> <a href="https://blog.weininger.net/tag/linux.html">Linux</a> </p>
 </footer><!-- /.post-info -->      <p>Today, after the usual</p>
 <pre class="code text literal-block">
 apt-get update; apt-get upgrade
@@ -68,21 +70,6 @@ few steps it is possible to switch to the old repository by simple
 reinstalling the packages. Great work Debian, thank you for this!</p>
 
     </div><!-- /.entry-content -->
-    <div class="comments">
-      <h2>Comments !</h2>
-      <div id="disqus_thread"></div>
-      <script type="text/javascript">
-        var disqus_shortname = 'weiningernet';
-        var disqus_identifier = 'how-to-keep-apt-get-and-aptitude-from-switching-repositories-when-upgrading-a-certain-package.html';
-        var disqus_url = 'https://weinimo.github.io/how-to-keep-apt-get-and-aptitude-from-switching-repositories-when-upgrading-a-certain-package.html';
-        (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//weiningernet.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        })();
-      </script>
-      <noscript>Please enable JavaScript to view the comments.</noscript>
-    </div>
 
   </article>
 </section>
@@ -90,7 +77,6 @@ reinstalling the packages. Great work Debian, thank you for this!</p>
                 <div class="social">
                         <h2>social</h2>
                         <ul>
-                            <li><a href="https://weinimo.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate">atom feed</a></li>
 
                             <li><a href="https://github.com/weinimo">github</a></li>
                         </ul>
@@ -99,29 +85,11 @@ reinstalling the packages. Great work Debian, thank you for this!</p>
 
         <footer id="contentinfo" class="body">
                 <address id="about" class="vcard body">
-                Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                Proudly powered by <a rel="nofollow" href="https://getpelican.com/">Pelican</a>, which takes great advantage of <a rel="nofollow" href="https://www.python.org/">Python</a>.
                 </address><!-- /#about -->
 
-                <p>The theme is by <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+                <p>The theme is by <a rel="nofollow" href="https://www.smashingmagazine.com/2009/08/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
         </footer><!-- /#contentinfo -->
 
-    <script type="text/javascript">
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-35922724-4', 'auto');
-    ga('send', 'pageview');
-    </script>
-<script type="text/javascript">
-    var disqus_shortname = 'weiningernet';
-    (function () {
-        var s = document.createElement('script'); s.async = true;
-        s.type = 'text/javascript';
-        s.src = 'https://' + disqus_shortname + '.disqus.com/count.js';
-        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-    }());
-</script>
 </body>
 </html>

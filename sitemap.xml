@@ -1,165 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
+xmlns:xhtml="http://www.w3.org/1999/xhtml"
 xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
-<loc>https://weinimo.github.io/</loc>
-<lastmod>2019-03-10T12:45:24-00:00</lastmod>
+<loc>https://blog.weininger.net/</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/archives.html</loc>
-<lastmod>2019-03-10T12:45:24-00:00</lastmod>
+<loc>https://blog.weininger.net/archives.html</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/tags.html</loc>
-<lastmod>2019-03-10T12:45:24-00:00</lastmod>
+<loc>https://blog.weininger.net/author/thomas-weininger.html</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/categories.html</loc>
-<lastmod>2019-03-10T12:45:24-00:00</lastmod>
+<loc>https://blog.weininger.net/authors.html</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/how-to-write-udev-rules-for-usb-devices.html</loc>
-<lastmod>2013-04-13T20:26:00+02:00</lastmod>
-<changefreq>monthly</changefreq>
+<loc>https://blog.weininger.net/categories.html</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/configuration-of-nginx-for-gitweb-and-git-http-backend.html</loc>
+<loc>https://blog.weininger.net/category/free-software.html</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<changefreq>daily</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://blog.weininger.net/configuration-of-nginx-for-gitweb-and-git-http-backend.html</loc>
 <lastmod>2012-12-15T13:55:00+01:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/streaming-video-files-to-samsung-tvs-part-2.html</loc>
-<lastmod>2012-06-15T20:49:00+02:00</lastmod>
-<changefreq>monthly</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>https://weinimo.github.io/how-to-keep-apt-get-and-aptitude-from-switching-repositories-when-upgrading-a-certain-package.html</loc>
+<loc>https://blog.weininger.net/how-to-keep-apt-get-and-aptitude-from-switching-repositories-when-upgrading-a-certain-package.html</loc>
 <lastmod>2012-05-17T18:30:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/streaming-video-files-to-samsung-tvs-part-1.html</loc>
+<loc>https://blog.weininger.net/how-to-write-udev-rules-for-usb-devices.html</loc>
+<lastmod>2013-04-13T20:26:00+02:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://blog.weininger.net/streaming-video-files-to-samsung-tvs-part-1.html</loc>
 <lastmod>2012-05-12T18:31:00+02:00</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/category/free-software.html</loc>
-<lastmod>2013-04-13T20:26:00+00:30</lastmod>
+<loc>https://blog.weininger.net/streaming-video-files-to-samsung-tvs-part-2.html</loc>
+<lastmod>2012-06-15T20:49:00+02:00</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+
+<url>
+<loc>https://blog.weininger.net/tag/apt.html</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/tag/development.html</loc>
-<lastmod>2012-12-15T13:55:00+00:30</lastmod>
+<loc>https://blog.weininger.net/tag/debian.html</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/tag/git.html</loc>
-<lastmod>2012-12-15T13:55:00+00:30</lastmod>
+<loc>https://blog.weininger.net/tag/development.html</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/tag/usb.html</loc>
-<lastmod>2013-04-13T20:26:00+00:30</lastmod>
+<loc>https://blog.weininger.net/tag/dlna.html</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/tag/udev.html</loc>
-<lastmod>2013-04-13T20:26:00+00:30</lastmod>
+<loc>https://blog.weininger.net/tag/git.html</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/tag/dlna.html</loc>
-<lastmod>2012-06-15T20:49:00+00:30</lastmod>
+<loc>https://blog.weininger.net/tag/linux.html</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/tag/nas.html</loc>
-<lastmod>2012-05-12T18:31:00+00:30</lastmod>
+<loc>https://blog.weininger.net/tag/nas.html</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/tag/apt.html</loc>
-<lastmod>2012-05-17T18:30:00+00:30</lastmod>
+<loc>https://blog.weininger.net/tag/ruby.html</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/tag/linux.html</loc>
-<lastmod>2013-04-13T20:26:00+00:30</lastmod>
+<loc>https://blog.weininger.net/tag/samsung-tv.html</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/tag/serviio.html</loc>
-<lastmod>2012-05-12T18:31:00+00:30</lastmod>
+<loc>https://blog.weininger.net/tag/serviio.html</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/tag/ruby.html</loc>
-<lastmod>2012-06-15T20:49:00+00:30</lastmod>
+<loc>https://blog.weininger.net/tag/udev.html</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/tag/debian.html</loc>
-<lastmod>2012-05-17T18:30:00+00:30</lastmod>
+<loc>https://blog.weininger.net/tag/usb.html</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
-<loc>https://weinimo.github.io/tag/samsung-tv.html</loc>
-<lastmod>2012-06-15T20:49:00+00:30</lastmod>
-<changefreq>daily</changefreq>
-<priority>0.5</priority>
-</url>
-
-<url>
-<loc>https://weinimo.github.io/author/thomas-weininger.html</loc>
-<lastmod>2013-04-13T20:26:00+00:30</lastmod>
+<loc>https://blog.weininger.net/tags.html</loc>
+<lastmod>2023-12-10T23:04:06-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>

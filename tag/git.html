@@ -2,32 +2,33 @@
 <html lang="en">
 <head>
         <meta charset="utf-8" />
-        <title>weinimo.github.io - Git</title>
-        <link rel="stylesheet" href="https://weinimo.github.io/theme/css/main.css" />
-        <link href="https://weinimo.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="weinimo.github.io Atom Feed" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="generator" content="Pelican" />
+        <title>blog.weininger.net - Git</title>
+        <link rel="stylesheet" href="https://blog.weininger.net/theme/css/main.css" />
 </head>
 
 <body id="index" class="home">
         <header id="banner" class="body">
-                <h1><a href="https://weinimo.github.io/">weinimo.github.io </a></h1>
+                <h1><a href="https://blog.weininger.net/">blog.weininger.net</a></h1>
                 <nav><ul>
-                    <li><a href="https://weinimo.github.io/category/free-software.html">Free Software</a></li>
+                    <li><a href="https://blog.weininger.net/category/free-software.html">Free Software</a></li>
                 </ul></nav>
         </header><!-- /#banner -->
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="https://weinimo.github.io/configuration-of-nginx-for-gitweb-and-git-http-backend.html">NGINX Configuration for Gitweb and git-http-backend</a></h1>
+                    <h1 class="entry-title"><a href="https://blog.weininger.net/configuration-of-nginx-for-gitweb-and-git-http-backend.html">NGINX Configuration for Gitweb and git-http-backend</a></h1>
 <footer class="post-info">
         <abbr class="published" title="2012-12-15T13:55:00+01:00">
                 Published: Sa 15 Dezember 2012
         </abbr>
 
         <address class="vcard author">
-                By                         <a class="url fn" href="https://weinimo.github.io/author/thomas-weininger.html">Thomas Weininger</a>
+                By                         <a class="url fn" href="https://blog.weininger.net/author/thomas-weininger.html">Thomas Weininger</a>
         </address>
-<p>In <a href="https://weinimo.github.io/category/free-software.html">Free Software</a>.</p>
-<p>tags: <a href="https://weinimo.github.io/tag/development.html">Development</a> <a href="https://weinimo.github.io/tag/git.html">Git</a> <a href="https://weinimo.github.io/tag/linux.html">Linux</a> </p>
+<p>In <a href="https://blog.weininger.net/category/free-software.html">Free Software</a>.</p>
+<p>tags: <a href="https://blog.weininger.net/tag/development.html">Development</a> <a href="https://blog.weininger.net/tag/git.html">Git</a> <a href="https://blog.weininger.net/tag/linux.html">Linux</a> </p>
 </footer><!-- /.post-info --><p>Gitweb is a nice web interface for Git repositories. For instance go
 to&nbsp;<a class="reference external" href="http://git.kernel.org/">http://git.kernel.org/</a>&nbsp;to see how it looks like. I find it useful
 especially when I'm using the machine of somebody else and need to check out
@@ -38,18 +39,18 @@ them via HTTPS. I would recommend to create an extra user &quot;git&quot; for it
 In this example I put my repositories to /home/git/repositories.
 Basically you can put them where you want.</p>
 <pre class="code sh literal-block">
-useradd -m git
-su git
-git clone --bare /old/repo.git /home/git/repositories/repo.git
-<span class="nb">cd</span> /home/git/repositories/repo.git
-sudo chmod -R g+ws .    <span class="c1"># Setting necessary rights for pushing to the repository.
-</span>sudo chgrp -R git .
+useradd<span class="w"> </span>-m<span class="w"> </span>git<span class="w">
+</span>su<span class="w"> </span>git<span class="w">
+</span>git<span class="w"> </span>clone<span class="w"> </span>--bare<span class="w"> </span>/old/repo.git<span class="w"> </span>/home/git/repositories/repo.git<span class="w">
+</span><span class="nb">cd</span><span class="w"> </span>/home/git/repositories/repo.git<span class="w">
+</span>sudo<span class="w"> </span>chmod<span class="w"> </span>-R<span class="w"> </span>g+ws<span class="w"> </span>.<span class="w">    </span><span class="c1"># Setting necessary rights for pushing to the repository.
+</span>sudo<span class="w"> </span>chgrp<span class="w"> </span>-R<span class="w"> </span>git<span class="w"> </span>.
 </pre>
 <p>Now configure your repositories:</p>
 <pre class="code sh literal-block">
-git --bare update-server-info
-cp hooks/post-update.sample hooks/post-update
-chmod a+x hooks/post-update
+git<span class="w"> </span>--bare<span class="w"> </span>update-server-info<span class="w">
+</span>cp<span class="w"> </span>hooks/post-update.sample<span class="w"> </span>hooks/post-update<span class="w">
+</span>chmod<span class="w"> </span>a+x<span class="w"> </span>hooks/post-update
 </pre>
 <p>This generates all the information that is necessary to share the
 repository using a webserver like NGINX.</p>
@@ -145,13 +146,12 @@ server {
 <div class="line"><strong>Update3:</strong> Disabled SSL and enabled TLS1.1 and TLS1.2 support.</div>
 <div class="line">Thanks for your comment itefixnet.</div>
 </div>
-<p>There are <a href="https://weinimo.github.io/configuration-of-nginx-for-gitweb-and-git-http-backend.html#disqus_thread">comments</a>.</p>                </article>
+                </article>
             </aside><!-- /#featured -->
         <section id="extras" class="body">
                 <div class="social">
                         <h2>social</h2>
                         <ul>
-                            <li><a href="https://weinimo.github.io/feeds/all.atom.xml" type="application/atom+xml" rel="alternate">atom feed</a></li>
 
                             <li><a href="https://github.com/weinimo">github</a></li>
                         </ul>
@@ -160,29 +160,11 @@ server {
 
         <footer id="contentinfo" class="body">
                 <address id="about" class="vcard body">
-                Proudly powered by <a href="http://getpelican.com/">Pelican</a>, which takes great advantage of <a href="http://python.org">Python</a>.
+                Proudly powered by <a rel="nofollow" href="https://getpelican.com/">Pelican</a>, which takes great advantage of <a rel="nofollow" href="https://www.python.org/">Python</a>.
                 </address><!-- /#about -->
 
-                <p>The theme is by <a href="http://coding.smashingmagazine.com/2009/08/04/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+                <p>The theme is by <a rel="nofollow" href="https://www.smashingmagazine.com/2009/08/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
         </footer><!-- /#contentinfo -->
 
-    <script type="text/javascript">
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-35922724-4', 'auto');
-    ga('send', 'pageview');
-    </script>
-<script type="text/javascript">
-    var disqus_shortname = 'weiningernet';
-    (function () {
-        var s = document.createElement('script'); s.async = true;
-        s.type = 'text/javascript';
-        s.src = 'https://' + disqus_shortname + '.disqus.com/count.js';
-        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
-    }());
-</script>
 </body>
 </html>
