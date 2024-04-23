@@ -6,42 +6,42 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://blog.weininger.net/</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://blog.weininger.net/archives.html</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://blog.weininger.net/author/thomas-weininger.html</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://blog.weininger.net/authors.html</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://blog.weininger.net/categories.html</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://blog.weininger.net/category/free-software.html</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
@@ -83,91 +83,91 @@ xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
 <loc>https://blog.weininger.net/tag/apt.html</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://blog.weininger.net/tag/debian.html</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://blog.weininger.net/tag/development.html</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://blog.weininger.net/tag/dlna.html</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://blog.weininger.net/tag/git.html</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://blog.weininger.net/tag/linux.html</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://blog.weininger.net/tag/nas.html</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://blog.weininger.net/tag/ruby.html</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://blog.weininger.net/tag/samsung-tv.html</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://blog.weininger.net/tag/serviio.html</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://blog.weininger.net/tag/udev.html</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://blog.weininger.net/tag/usb.html</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
 
 <url>
 <loc>https://blog.weininger.net/tags.html</loc>
-<lastmod>2023-12-10T23:04:06-00:00</lastmod>
+<lastmod>2024-04-23T19:15:56-00:00</lastmod>
 <changefreq>daily</changefreq>
 <priority>0.5</priority>
 </url>
